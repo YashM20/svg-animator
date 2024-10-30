@@ -4,6 +4,12 @@
 
 ### Patch Changes
 
+- 1b259e5: minor package and pulish changes
+
+## 0.0.3
+
+### Patch Changes
+
 - 58e56b3: repo added in package
 
 ## 0.0.2
