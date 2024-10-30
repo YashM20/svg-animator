@@ -1,5 +1,12 @@
 # svg-text-animator
 
+## 0.0.6
+
+### Patch Changes
+
+- 6766dab: structure improvement, type fix, animation fix
+- 61c0b55: First Proper code release
+
 ## 0.0.3
 
 ### Patch Changes
