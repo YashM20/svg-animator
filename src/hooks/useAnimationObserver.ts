@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from 'react';
 
 interface UseAnimationObserverProps {
@@ -16,7 +15,7 @@ export const useAnimationObserver = ({
   root = null,
   rootMargin = '0px',
 }: UseAnimationObserverProps) => {
-  const elementRef = useRef<HTMLElement | null>(null);
+  const elementRef = useRef<Element | null>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(

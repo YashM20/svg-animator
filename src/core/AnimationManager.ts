@@ -1,11 +1,10 @@
 import { AnimationError, ErrorCodes } from '../errors/AnimationError';
-import type { TextAnimationConfig } from '../index';
+import type { TextAnimationConfig } from '../types';
 import { memoize } from '../utils/performance';
 
 export class AnimationManager {
   private static instance: AnimationManager | null = null;
   private styleSheet: HTMLStyleElement | null = null;
-  private animationCounter = 0;
   private cleanupCallbacks = new Map<string, () => void>();
   private readonly observers = new Set<(id: string) => void>();
 
@@ -50,16 +49,49 @@ export class AnimationManager {
     this.observers.forEach((observer) => observer(id));
   }
 
+  private createKeyframesString(animationName: string, config: TextAnimationConfig): string {
+    return `
+      @keyframes ${animationName}-stroke {
+        0% {
+          stroke-dashoffset: ${config.strokeDashoffset};
+          fill: transparent;
+        }
+        60% {
+          stroke-dashoffset: 0;
+          fill: transparent;
+        }
+        80% {
+          stroke-dashoffset: 0;
+          fill: ${config.fillColor}40;
+        }
+        100% {
+          stroke-dashoffset: 0;
+          fill: ${config.fillColor};
+        }
+      }
+    `;
+  }
+
   public createKeyframes = memoize(
     (animationName: string, config: TextAnimationConfig): string => {
-      return `
-        @keyframes ${animationName}-stroke {...}
-        @keyframes ${animationName}-fill {...}
-      `;
+      const keyframes = this.createKeyframesString(animationName, config);
+      if (this.styleSheet?.sheet) {
+        const ruleIndex = this.styleSheet.sheet.cssRules.length;
+        this.styleSheet.sheet.insertRule(keyframes, ruleIndex);
+
+        this.cleanupCallbacks.set(animationName, () => {
+          if (this.styleSheet?.sheet) {
+            this.styleSheet.sheet.deleteRule(ruleIndex);
+          }
+        });
+      }
+      return animationName;
     }
   );
 
   public cleanup(id: string): void {
+    if (!id) return;
+
     try {
       const callback = this.cleanupCallbacks.get(id);
       if (callback) {

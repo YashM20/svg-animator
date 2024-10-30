@@ -30,7 +30,6 @@ export const AnimatedText: React.FC<AnimatedTextProps> = ({
   pauseWhenOutOfView = true,
 }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
-  const animationIdRef = useRef<string>();
 
   // Validate configs
   useEffect(() => {
@@ -65,51 +64,66 @@ export const AnimatedText: React.FC<AnimatedTextProps> = ({
   useEffect(() => {
     if (!svgRef.current) return;
 
-    try {
-      const textElement = creator.createAnimatedText(
-        text,
-        font,
-        textConfig,
-        animationConfig
-      );
+    let mounted = true;
+    const cleanup = new Set<() => void>();
 
-      const handleAnimationStart = () => {
-        onAnimationStart?.();
-      };
+    const setupAnimation = async () => {
+      try {
+        const textElement = await creator.createAnimatedText(
+          text,
+          font,
+          textConfig,
+          animationConfig
+        );
 
-      const handleAnimationEnd = () => {
-        onAnimationEnd?.();
-      };
+        // Check if component is still mounted
+        if (!mounted || !svgRef.current) return;
 
-      textElement.addEventListener('animationstart', handleAnimationStart);
-      textElement.addEventListener('animationend', handleAnimationEnd);
+        const handleAnimationStart = () => {
+          onAnimationStart?.();
+        };
 
-      svgRef.current.appendChild(textElement);
+        const handleAnimationEnd = () => {
+          onAnimationEnd?.();
+        };
 
-      return () => {
-        textElement.removeEventListener('animationstart', handleAnimationStart);
-        textElement.removeEventListener('animationend', handleAnimationEnd);
-        if (textElement.parentNode) {
-          textElement.parentNode.removeChild(textElement);
-        }
-      };
-    } catch (error) {
-      throw new AnimationError(
-        `Failed to create animated text: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        ErrorCodes.ANIMATION_FAILED
-      );
-    }
+        textElement.addEventListener('animationstart', handleAnimationStart);
+        textElement.addEventListener('animationend', handleAnimationEnd);
+
+        svgRef.current.appendChild(textElement);
+
+        cleanup.add(() => {
+          textElement.removeEventListener('animationstart', handleAnimationStart);
+          textElement.removeEventListener('animationend', handleAnimationEnd);
+          if (textElement.parentNode) {
+            textElement.parentNode.removeChild(textElement);
+          }
+        });
+      } catch (error) {
+        if (!mounted) return;
+        throw new AnimationError(
+          `Failed to create animated text: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          ErrorCodes.ANIMATION_FAILED
+        );
+      }
+    };
+
+    setupAnimation();
+
+    return () => {
+      mounted = false;
+      cleanup.forEach(fn => fn());
+      cleanup.clear();
+    };
   }, [text, font, textConfig, animationConfig, creator, onAnimationStart, onAnimationEnd]);
 
   // Create a callback ref to handle both refs
   const setRefs = useCallback(
     (element: SVGSVGElement | null) => {
-      // Safe way to set the svgRef
       svgRef.current = element;
 
-      // Safe way to set the observer ref
-      if (observerRef && 'current' in observerRef) {
-        (observerRef as React.MutableRefObject<SVGSVGElement | null>).current = element;
+      if (observerRef && typeof observerRef === 'object' && 'current' in observerRef) {
+        (observerRef as React.MutableRefObject<Element | null>).current = element;
       }
     },
     [observerRef]
@@ -119,6 +133,8 @@ export const AnimatedText: React.FC<AnimatedTextProps> = ({
     <svg
       ref={setRefs}
       className={className}
+      viewBox="0 0 100 100"
+      preserveAspectRatio="xMidYMid meet"
       style={{
         width: '100%',
         height: '100%',
