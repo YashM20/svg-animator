@@ -1,6 +1,6 @@
 {
-  "name": "svg-text-animator",
-  "version": "1.0.1",
+  "name": "@reactopia/svg-animator",
+  "version": "0.0.2",
   "description": "Professional SVG text animation library with React support",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

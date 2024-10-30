@@ -1,6 +1,12 @@
 # svg-text-animator
 
-## 1.0.1
+## 0.0.2
+
+### Patch Changes
+
+- package name change
+
+## 0.0.1
 
 ### Patch Changes
 
