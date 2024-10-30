@@ -14,6 +14,9 @@ importers:
       react-dom:
         specifier: '>=16.8.0'
         version: 18.3.1(react@18.3.1)
+      zod:
+        specifier: ^3.22.4
+        version: 3.23.8
     devDependencies:
       '@changesets/cli':
         specifier: ^2.27.9
@@ -2394,6 +2397,9 @@ packages:
   yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+
+  zod@3.23.8:
+    resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
 
 snapshots:
 
@@ -5102,3 +5108,5 @@ snapshots:
       yargs-parser: 21.1.1
 
   yocto-queue@0.1.0: {}
+
+  zod@3.23.8: {}
