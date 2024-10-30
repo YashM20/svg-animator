@@ -1,5 +1,11 @@
 # svg-text-animator
 
+## 0.0.3
+
+### Patch Changes
+
+- 58e56b3: repo added in package
+
 ## 0.0.2
 
 ### Patch Changes
