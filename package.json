@@ -6,6 +6,7 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "sideEffects": false,
+  "private": false,
   "license": "MIT",
   "files": [
     "dist"
@@ -39,5 +40,24 @@
     "tsup": "^8.3.5",
     "typescript": "^5.6.3"
   },
-  "author": "Yash Mahajan"
+  "author": "Yash Mahajan",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "SVG",
+    "animation",
+    "text animation",
+    "React",
+    "SVG animation",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YashM20/svg-animator.git"
+  },
+  "homepage": "https://github.com/YashM20/svg-animator",
+  "bugs": {
+    "url": "https://github.com/YashM20/svg-animator/issues"
+  }
 }
